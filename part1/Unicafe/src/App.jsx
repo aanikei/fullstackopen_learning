@@ -8,16 +8,20 @@ const Button = ({text, setter}) => {
 
 const Statistics = ({good, neutral, bad}) => {
   const val_sum = good + neutral + bad
-  return (
-    <>
-      <div>good {good}</div>
-      <div>neutral {neutral}</div>
-      <div>bad {bad}</div>
-      <div>all {val_sum}</div>
-      <div>average {val_sum == 0 ? 0 : (good - bad) / val_sum}</div>
-      <div>positive {val_sum == 0 ? 0 : good / val_sum * 100} %</div>
-    </>
-  )
+  if (val_sum == 0) {
+    return <div>No feedback given</div>
+  } else {
+    return (
+      <>
+        <div>good {good}</div>
+        <div>neutral {neutral}</div>
+        <div>bad {bad}</div>
+        <div>all {val_sum}</div>
+        <div>average {val_sum == 0 ? 0 : (good - bad) / val_sum}</div>
+        <div>positive {val_sum == 0 ? 0 : good / val_sum * 100} %</div>
+      </>
+    )
+  }
 }
 
 const App = () => {
