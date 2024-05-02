@@ -6,6 +6,12 @@ const Button = ({text, setter}) => {
   )
 }
 
+const StatisticLine = ({text, value, unit}) => {
+  return (
+    <div>{text} {value} {unit}</div>
+  )
+}
+
 const Statistics = ({good, neutral, bad}) => {
   const val_sum = good + neutral + bad
   if (val_sum == 0) {
@@ -13,12 +19,12 @@ const Statistics = ({good, neutral, bad}) => {
   } else {
     return (
       <>
-        <div>good {good}</div>
-        <div>neutral {neutral}</div>
-        <div>bad {bad}</div>
-        <div>all {val_sum}</div>
-        <div>average {val_sum == 0 ? 0 : (good - bad) / val_sum}</div>
-        <div>positive {val_sum == 0 ? 0 : good / val_sum * 100} %</div>
+        <StatisticLine text="good" value={good} />
+        <StatisticLine text="neutral" value={neutral} />
+        <StatisticLine text="bad" value={bad} />
+        <StatisticLine text="all" value={val_sum} />
+        <StatisticLine text="average" value={val_sum == 0 ? 0 : (good - bad) / val_sum} />
+        <StatisticLine text="positive" value={val_sum == 0 ? 0 : good / val_sum * 100} unit="%" />
       </>
     )
   }
