@@ -1,5 +1,27 @@
 import { useState } from 'react'
 
+const Popular = ({votes, anecdotes}) => {
+  let max_value = 0
+  let index = 0
+
+  if (Object.keys(votes).length > 0) {
+    for (const i in votes) {
+      if (max_value < votes[i]) {
+        max_value = votes[i]
+        index = i
+      }
+    }
+  }
+
+  return (
+    <div>
+      <h2>Anecdote with most votes</h2>
+      {anecdotes[index]}
+      <div>has {max_value} votes</div>
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -13,7 +35,8 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
-  const [votes, setVote] = useState(0)  
+  const [votes, setVote] = useState([])
+  //console.log(typeof(votes))
 
   const next_anecdote = (len) => {
     const rand_int = () => {
@@ -39,12 +62,14 @@ const App = () => {
   
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       {anecdotes[selected]}
       <div>has {votes[selected] == undefined ? 0 : votes[selected]} votes</div>
       <div>
         <button onClick={set_vote(selected)}>vote</button>
         <button onClick={next_anecdote(anecdotes.length)}>next anecdote</button>
       </div>
+      <Popular votes={votes} anecdotes={anecdotes} />
     </div>
   )
 }
