@@ -8,7 +8,10 @@ const Button = ({text, setter}) => {
 
 const StatisticLine = ({text, value, unit}) => {
   return (
-    <div>{text} {value} {unit}</div>
+    <tr>
+      <td>{text}</td>
+      <td>{value} {unit}</td>
+    </tr>
   )
 }
 
@@ -18,14 +21,16 @@ const Statistics = ({good, neutral, bad}) => {
     return <div>No feedback given</div>
   } else {
     return (
-      <>
-        <StatisticLine text="good" value={good} />
-        <StatisticLine text="neutral" value={neutral} />
-        <StatisticLine text="bad" value={bad} />
-        <StatisticLine text="all" value={val_sum} />
-        <StatisticLine text="average" value={val_sum == 0 ? 0 : (good - bad) / val_sum} />
-        <StatisticLine text="positive" value={val_sum == 0 ? 0 : good / val_sum * 100} unit="%" />
-      </>
+      <table>
+        <tbody>
+          <StatisticLine text="good" value={good} />
+          <StatisticLine text="neutral" value={neutral} />
+          <StatisticLine text="bad" value={bad} />
+          <StatisticLine text="all" value={val_sum} />
+          <StatisticLine text="average" value={(good - bad) / val_sum} />
+          <StatisticLine text="positive" value={good / val_sum * 100} unit="%" />
+        </tbody>
+      </table>
     )
   }
 }
