@@ -13,6 +13,7 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const [votes, setVote] = useState(0)  
 
   const next_anecdote = (len) => {
     const rand_int = () => {
@@ -20,11 +21,28 @@ const App = () => {
     }
     return rand_int
   }
+
+  const set_vote = (index) => {
+    const rand_int = () => {
+      
+      const copy = { ...votes }
+      if (copy[index] == undefined) {
+        copy[index] = 1
+      } else {
+        copy[index] += 1
+      }
+      
+      setVote(copy)
+    }
+    return rand_int
+  }
   
   return (
     <div>
       {anecdotes[selected]}
+      <div>has {votes[selected] == undefined ? 0 : votes[selected]} votes</div>
       <div>
+        <button onClick={set_vote(selected)}>vote</button>
         <button onClick={next_anecdote(anecdotes.length)}>next anecdote</button>
       </div>
     </div>
