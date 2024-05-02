@@ -6,9 +6,17 @@ const Button = ({text, setter}) => {
   )
 }
 
-const Statistics = ({text, value}) => {
+const Statistics = ({good, neutral, bad}) => {
+  const val_sum = good + neutral + bad
   return (
-    <div>{text} {value}</div>
+    <>
+      <div>good {good}</div>
+      <div>neutral {neutral}</div>
+      <div>bad {bad}</div>
+      <div>all {val_sum}</div>
+      <div>average {val_sum == 0 ? 0 : (good - bad) / val_sum}</div>
+      <div>positive {val_sum == 0 ? 0 : good / val_sum * 100} %</div>
+    </>
   )
 }
 
@@ -25,9 +33,7 @@ const App = () => {
       <Button text="neutral" setter={() => setNeutral(neutral + 1)} />
       <Button text="bad" setter={() => setBad(bad + 1)} />
       <h2>statistics</h2>
-      <Statistics text="good" value={good} />
-      <Statistics text="neutral" value={neutral} />
-      <Statistics text="bad" value={bad} />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
