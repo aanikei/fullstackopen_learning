@@ -1,2 +1,8 @@
 node_modules/
 test/
+.eslintrc.cjs
+package-lock.json
+vite.svg
+vite.config.js
+package.json
+README.md
