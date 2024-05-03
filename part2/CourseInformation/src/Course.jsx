@@ -18,6 +18,7 @@ const Content = ({props}) => {
     return (
         <div>
             { array.map(i => <Part key={i.id} props={i} />) }
+            <h3>total of { array.reduce((sum, i) => sum + i.exercises, 0) } exercises</h3>
         </div>
     )
 }
