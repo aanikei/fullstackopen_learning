@@ -14,11 +14,11 @@ const App = () => {
     console.log('effect')
     personService
       .getAll()
-      .then(initPesons => {setPersons(initPesons)})
+      .then(initPersons => {setPersons(initPersons)})
     }, 
   [])
 
-  const display_list = filterName === "" ? persons : persons.filter(i => i.name.toLowerCase().includes(filterName.toLowerCase()))
+  const displayList = filterName === "" ? persons : persons.filter(i => i.name.toLowerCase().includes(filterName.toLowerCase()))
 
   const addName = (event) => {
     event.preventDefault()
@@ -31,11 +31,26 @@ const App = () => {
 
       personService
         .create(newPerson)
-        .then(returnedPerson => setPersons(persons.concat(returnedPerson)))
+        .then(returnedName => setPersons(persons.concat(returnedName)))
     }
     
     setNewName('')
     setNewNumber('')
+  }
+
+  const deletePerson = (event) => {
+    const id = event.target.value
+    console.log(id)
+    const person = persons.filter(item => item.id == id)[0]
+    console.log(person)
+    if (window.confirm(`Do you really want to delete ${person.name}?`)) {
+      personService
+        .deleteName(id)
+        .then(returnedName => {
+          console.log(returnedName)
+          setPersons(persons.filter(item => item.id != returnedName.id))
+        })
+    }
   }
 
   const handleNewName = (event) => {
@@ -57,7 +72,7 @@ const App = () => {
             newNumber={newNumber}
             handleNewNumber={handleNewNumber} />
       <h2>Numbers</h2>
-      <Persons persons={display_list} />
+      <Persons persons={displayList} deletePerson={deletePerson} />
     </div>
   )
 }
