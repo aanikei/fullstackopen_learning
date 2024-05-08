@@ -24,8 +24,19 @@ const App = () => {
     event.preventDefault()
     
     if (persons.map(i => i.name).indexOf(newName) != -1) {
-      alert(`${newName} is already added to phonebook`)
-      return
+      const existingPerson = persons.filter(i => i.name == newName)[0]
+      if (existingPerson.name == newName && existingPerson.number == newNumber) {
+        alert(`${existingPerson.name} is already added to phonebook!`)
+        return
+      } else {
+        if (window.confirm(`${existingPerson.name} is already added to the phonebook, replate the ole number with a new one?`)) {
+          const updatedPerson = { ...existingPerson, number: newNumber }
+          console.log("updatedPerson", updatedPerson)
+          personService
+            .update(updatedPerson)
+            .then(returnedName => setPersons(persons.map(i => i.id != returnedName.id ? i : updatedPerson)))
+        }
+      }
     } else {
       const newPerson = { name: newName, number: newNumber }
 
