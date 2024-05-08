@@ -27,22 +27,37 @@ const App = () => {
     
     if (persons.map(i => i.name).indexOf(newName) != -1) {
       const existingPerson = persons.filter(i => i.name == newName)[0]
+
       if (existingPerson.name == newName && existingPerson.number == newNumber) {
         alert(`${existingPerson.name} is already added to phonebook!`)
         return
+
       } else {
         if (window.confirm(`${existingPerson.name} is already added to the phonebook, replate the ole number with a new one?`)) {
           const updatedPerson = { ...existingPerson, number: newNumber }
           console.log("updatedPerson", updatedPerson)
+
+          let isSucces = true;
+
           personService
             .update(updatedPerson)
             .then(returnedName => setPersons(persons.map(i => i.id != returnedName.id ? i : updatedPerson)))
-
-          const msg = {message: `Updated '${updatedPerson.name}'`, success: true}
-          setMessage(msg)        
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
+            .catch(error => {
+              const msg = {message: `Information about '${updatedPerson.name}' has already been removed from the server`, success: false}
+              setPersons(persons.filter(i => i.name != updatedPerson.name))
+              setMessage(msg)        
+              setTimeout(() => {
+                setMessage(null)
+              }, 5000)
+            })
+          
+          if (isSucces) {
+            const msg = {message: `Updated '${updatedPerson.name}'`, success: true}
+            setMessage(msg)        
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          }
         }
       }
     } else {
