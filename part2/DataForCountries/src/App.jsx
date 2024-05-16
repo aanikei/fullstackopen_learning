@@ -34,7 +34,7 @@ function App() {
       <div>
         find countries: <input onChange={handleCountry} />
       </div>
-      <CountryDisplay list={country} />
+      <CountryDisplay list={country} refreshList={refreshList} />
     </>
   )
 }
