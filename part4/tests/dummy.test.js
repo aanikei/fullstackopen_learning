@@ -11,7 +11,7 @@ test('dummy returns one', () => {
 })
 
 describe('total likes', () => {
-    test('when list has no blogs, equals to 0', () => {
+  test('when list has no blogs, equals to 0', () => {
     const result = listHelper.totalLikes([])
     assert.strictEqual(result, 0)
   })
@@ -21,8 +21,43 @@ describe('total likes', () => {
     assert.strictEqual(result, 7)
   })
 
-  test('sum of likes of several blogs', () => {
+  test('when list has many blogs, sum of likes of all blogs', () => {
     const result = listHelper.totalLikes(blogs)
     assert.strictEqual(result, 36)
+  })
+})
+
+describe('favorites', () => {
+  test('when list has no blogs, equals to undefined', () => {
+    const result = listHelper.favoriteBlog([])
+    assert.strictEqual(result, undefined)
+  })
+
+  test('when list has one blog, equals to that', () => {
+    const singleObject = {
+      _id: "5a422a851b54a676234d17f7",
+      title: "React patterns",
+      author: "Michael Chan",
+      url: "https://reactpatterns.com/",
+      likes: 7,
+      __v: 0
+    }
+
+    const result = listHelper.favoriteBlog([blogs[0]])
+    assert.deepStrictEqual(result, singleObject)
+  })
+
+  test('when list has many blogs, equals to blog with maximum likes', () => {
+    const singleObject = {
+      _id: "5a422b3a1b54a676234d17f9",
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+      likes: 12,
+      __v: 0
+    }
+
+    const result = listHelper.favoriteBlog(blogs)
+    assert.deepStrictEqual(result, singleObject)
   })
 })
