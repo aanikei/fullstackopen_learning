@@ -61,3 +61,30 @@ describe('favorites', () => {
     assert.deepStrictEqual(result, singleObject)
   })
 })
+
+describe('authors', () => {
+  test('when list has no blogs, equals to {}', () => {
+    const result = listHelper.mostBlogs([])
+    assert.deepStrictEqual(result, {})
+  })
+
+  test('when list has one blog, equals to that', () => {
+    const singleObject = {
+      author: "Michael Chan",
+      blogs: 1
+    }
+
+    const result = listHelper.mostBlogs([blogs[0]])
+    assert.deepStrictEqual(result, singleObject)
+  })
+
+  test('when list has many blogs, equals to the most prolific author', () => {
+    const singleObject = {
+      author: "Robert C. Martin",
+      blogs: 3
+    }
+
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepStrictEqual(result, singleObject)
+  })
+})
