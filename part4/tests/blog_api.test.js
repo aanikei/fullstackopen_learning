@@ -78,8 +78,7 @@ describe('testing POST /api/blogs', () => {
     const lastBlog = allBlogs.body[allBlogs.body.length - 1]
     const { __v, id, ...strippedLastBlog } = lastBlog;
 
-    const likes = 0
-    const updatedNewBlog = { ...newBlog, likes }
+    const updatedNewBlog = { ...newBlog, likes: 0 }
 
     assert.deepStrictEqual(strippedLastBlog, updatedNewBlog)
   })
@@ -107,11 +106,32 @@ describe('testing POST /api/blogs', () => {
   })
 })
 
-describe('testing DELETE /api/blogs:id', () => {
+describe('testing DELETE /api/blogs/:id', () => {
   test('deleting a single blog post resource', async () => {
     const response = await api
       .delete('/api/blogs/5a422a851b54a676234d17f7')
       .expect(204)
+  })
+})
+
+describe('testing PUT /api/blogs/:id', () => {
+  test('updating the number of likes of an individual blog post', async () => {
+    const firstBlog = helper.blogs[0]
+    const { _id, ...FirstBlogWithoutID } = firstBlog
+    const updatedFirstBlog = { ...FirstBlogWithoutID, likes: 123, id: firstBlog['_id'] }
+
+    const response = await api
+      .put(`/api/blogs/${updatedFirstBlog['id']}`)
+      .send(updatedFirstBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+      console.log("response", response._body)
+
+    assert.deepStrictEqual(response._body, updatedFirstBlog)
+
+    const allBlogs = await api.get('/api/blogs')
+    assert.deepStrictEqual(allBlogs.body[0], updatedFirstBlog)
   })
 })
 
