@@ -59,7 +59,35 @@ test('new blog is correctly added', async () => {
 
   console.log("strippedLastBlog", strippedLastBlog)
 
-  assert.deepStrictEqual(newBlog, strippedLastBlog)
+  assert.deepStrictEqual(strippedLastBlog, newBlog)
+})
+
+test('if the likes property is missing, defaults to 0', async () => {
+  const newBlog = {
+    "title": "Test Blog",
+    "author": "Test Author",
+    "url": "http://localhost:12345"
+  }
+
+  const response = await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+
+  const allBlogs = await api.get('/api/blogs')
+
+  const lastBlog = allBlogs.body[allBlogs.body.length - 1]
+
+  const { __v, id, ...strippedLastBlog } = lastBlog;
+
+  console.log("strippedLastBlog", strippedLastBlog)
+
+  const likes = 0
+  const updatedNewBlog = { ...newBlog, likes }
+  console.log("updatedNewBlog", updatedNewBlog)
+
+  assert.deepStrictEqual(strippedLastBlog, updatedNewBlog)
 })
 
 after(async () => {
