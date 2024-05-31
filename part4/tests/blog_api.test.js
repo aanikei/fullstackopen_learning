@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -13,104 +13,106 @@ beforeEach(async () => {
 
   const blogObjects = helper.blogs
     .map(blog => new Blog(blog))
-    
+
   const promiseArray = blogObjects.map(blog => blog.save())
   await Promise.all(promiseArray)
 })
 
-test('blogs are returned in correct amount and as json', async () => {
-  const response = await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('testing GET /api/blogs', () => {
+  test('blogs are returned in correct amount and as json', async () => {
+    const response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-  assert.strictEqual(response.body.length, helper.blogs.length)
+    assert.strictEqual(response.body.length, helper.blogs.length)
+  })
+
+  test('unique identifier property of the blog posts is named id', async () => {
+    const response = await api
+      .get('/api/blogs')
+    
+    assert.notStrictEqual(response.body[0]['id'], undefined)
+  })
 })
 
-test('unique identifier property of the blog posts is named id', async () => {
-  const response = await api
-    .get('/api/blogs')
-  
-  assert.notStrictEqual(response.body[0]['id'], undefined)
+describe('testing POST /api/blogs', () => {
+  test('new blog is correctly added', async () => {
+    const newBlog = {
+      "title": "Test Blog",
+      "author": "Test Author",
+      "url": "http://localhost:12345",
+      "likes": 0
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const allBlogs = await api.get('/api/blogs')
+
+    assert.strictEqual(allBlogs.body.length, helper.blogs.length + 1)
+
+    const lastBlog = allBlogs.body[allBlogs.body.length - 1]
+    const { __v, id, ...strippedLastBlog } = lastBlog;
+
+    assert.deepStrictEqual(strippedLastBlog, newBlog)
+  })
+
+  test('if the likes property is missing, defaults to 0', async () => {
+    const newBlog = {
+      "title": "Test Blog",
+      "author": "Test Author",
+      "url": "http://localhost:12345"
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const allBlogs = await api.get('/api/blogs')
+    const lastBlog = allBlogs.body[allBlogs.body.length - 1]
+    const { __v, id, ...strippedLastBlog } = lastBlog;
+
+    const likes = 0
+    const updatedNewBlog = { ...newBlog, likes }
+
+    assert.deepStrictEqual(strippedLastBlog, updatedNewBlog)
+  })
+
+  test('if the title or url properties are missing, respond 400 Bad Request', async () => {
+    const newBlogNoTitle = {
+      "author": "Test Author",
+      "url": "http://localhost:12345"
+    }
+
+    const responseForNoTitle = await api
+      .post('/api/blogs')
+      .send(newBlogNoTitle)
+      .expect(400)
+
+    const newBlogNoURL = {
+      "title": "Test Blog",
+      "author": "Test Author"
+    }
+
+    const responseForNoURL = await api
+      .post('/api/blogs')
+      .send(newBlogNoURL)
+      .expect(400)
+  })
 })
 
-test('new blog is correctly added', async () => {
-  const newBlog = {
-    "title": "Test Blog",
-    "author": "Test Author",
-    "url": "http://localhost:12345",
-    "likes": 0
-  }
-
-  const response = await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-
-  console.log("response", response.text)
-
-  const allBlogs = await api.get('/api/blogs')
-
-  assert.strictEqual(allBlogs.body.length, helper.blogs.length + 1)
-
-  const lastBlog = allBlogs.body[allBlogs.body.length - 1]
-
-  const { __v, id, ...strippedLastBlog } = lastBlog;
-
-  console.log("strippedLastBlog", strippedLastBlog)
-
-  assert.deepStrictEqual(strippedLastBlog, newBlog)
-})
-
-test('if the likes property is missing, defaults to 0', async () => {
-  const newBlog = {
-    "title": "Test Blog",
-    "author": "Test Author",
-    "url": "http://localhost:12345"
-  }
-
-  const response = await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-
-  const allBlogs = await api.get('/api/blogs')
-
-  const lastBlog = allBlogs.body[allBlogs.body.length - 1]
-
-  const { __v, id, ...strippedLastBlog } = lastBlog;
-
-  console.log("strippedLastBlog", strippedLastBlog)
-
-  const likes = 0
-  const updatedNewBlog = { ...newBlog, likes }
-  console.log("updatedNewBlog", updatedNewBlog)
-
-  assert.deepStrictEqual(strippedLastBlog, updatedNewBlog)
-})
-
-test('if the title or url properties are missing, respond 400 Bad Request', async () => {
-  const newBlogNoTitle = {
-    "author": "Test Author",
-    "url": "http://localhost:12345"
-  }
-
-  const responseForNoTitle = await api
-    .post('/api/blogs')
-    .send(newBlogNoTitle)
-    .expect(400)
-
-  const newBlogNoURL = {
-    "title": "Test Blog",
-    "author": "Test Author"
-  }
-
-  const responseForNoURL = await api
-    .post('/api/blogs')
-    .send(newBlogNoURL)
-    .expect(400)
+describe('testing DELETE /api/blogs:id', () => {
+  test('deleting a single blog post resource', async () => {
+    const response = await api
+      .delete('/api/blogs/5a422a851b54a676234d17f7')
+      .expect(204)
+  })
 })
 
 after(async () => {
