@@ -13,6 +13,7 @@ beforeEach(async () => {
 
   const blogObjects = helper.blogs
     .map(blog => new Blog(blog))
+    
   const promiseArray = blogObjects.map(blog => blog.save())
   await Promise.all(promiseArray)
 })
@@ -42,10 +43,10 @@ test('new blog is correctly added', async () => {
   }
 
   const response = await api
-  .post('/api/blogs')
-  .send(newBlog)
-  .expect(201)
-  .expect('Content-Type', /application\/json/)
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
 
   console.log("response", response.text)
 
@@ -70,10 +71,10 @@ test('if the likes property is missing, defaults to 0', async () => {
   }
 
   const response = await api
-  .post('/api/blogs')
-  .send(newBlog)
-  .expect(201)
-  .expect('Content-Type', /application\/json/)
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
 
   const allBlogs = await api.get('/api/blogs')
 
@@ -88,6 +89,28 @@ test('if the likes property is missing, defaults to 0', async () => {
   console.log("updatedNewBlog", updatedNewBlog)
 
   assert.deepStrictEqual(strippedLastBlog, updatedNewBlog)
+})
+
+test('if the title or url properties are missing, respond 400 Bad Request', async () => {
+  const newBlogNoTitle = {
+    "author": "Test Author",
+    "url": "http://localhost:12345"
+  }
+
+  const responseForNoTitle = await api
+    .post('/api/blogs')
+    .send(newBlogNoTitle)
+    .expect(400)
+
+  const newBlogNoURL = {
+    "title": "Test Blog",
+    "author": "Test Author"
+  }
+
+  const responseForNoURL = await api
+    .post('/api/blogs')
+    .send(newBlogNoURL)
+    .expect(400)
 })
 
 after(async () => {
