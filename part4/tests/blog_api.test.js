@@ -2,16 +2,18 @@ const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
+const helper = require('./test_helper')
 const app = require('../app')
 const Blog = require('../models/blog').model
-const helper = require('./test_helper')
+const User = require('../models/user')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
 
-  const blogObjects = helper.blogs
+  const blogObjects = helper.initialBlogs
     .map(blog => new Blog(blog))
 
   const promiseArray = blogObjects.map(blog => blog.save())
@@ -25,7 +27,7 @@ describe('testing GET /api/blogs', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    assert.strictEqual(response.body.length, helper.blogs.length)
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
   test('unique identifier property of the blog posts is named id', async () => {
@@ -53,7 +55,7 @@ describe('testing POST /api/blogs', () => {
 
     const allBlogs = await api.get('/api/blogs')
 
-    assert.strictEqual(allBlogs.body.length, helper.blogs.length + 1)
+    assert.strictEqual(allBlogs.body.length, helper.initialBlogs.length + 1)
 
     const lastBlog = allBlogs.body[allBlogs.body.length - 1]
     const { __v, id, ...strippedLastBlog } = lastBlog;
@@ -116,7 +118,7 @@ describe('testing DELETE /api/blogs/:id', () => {
 
 describe('testing PUT /api/blogs/:id', () => {
   test('updating the number of likes of an individual blog post', async () => {
-    const firstBlog = helper.blogs[0]
+    const firstBlog = helper.initialBlogs[0]
     const { _id, ...FirstBlogWithoutID } = firstBlog
     const updatedFirstBlog = { ...FirstBlogWithoutID, likes: 123, id: firstBlog['_id'] }
 
@@ -132,6 +134,39 @@ describe('testing PUT /api/blogs/:id', () => {
 
     const allBlogs = await api.get('/api/blogs')
     assert.deepStrictEqual(allBlogs.body[0], updatedFirstBlog)
+  })
+})
+
+describe('testing POST /api/users', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const password = await bcrypt.hash('seckret', 10)
+    const user = new User({ username: 'testuser1', name: 'User 1', password })
+
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'aanikei',
+      name: 'Artur',
+      password: await bcrypt.hash('seckret', 9)
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert(usernames.includes(newUser.username))
   })
 })
 
