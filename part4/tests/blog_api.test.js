@@ -7,6 +7,7 @@ const helper = require('./test_helper')
 const app = require('../app')
 const Blog = require('../models/blog').model
 const User = require('../models/user')
+const logger = require('../utils/logger')
 
 const api = supertest(app)
 
@@ -128,7 +129,7 @@ describe('testing PUT /api/blogs/:id', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-      console.log("response", response._body)
+      //console.log("response", response._body)
 
     assert.deepStrictEqual(response._body, updatedFirstBlog)
 
@@ -142,18 +143,19 @@ describe('testing POST /api/users', () => {
     await User.deleteMany({})
 
     const password = await bcrypt.hash('seckret', 10)
-    const user = new User({ username: 'testuser1', name: 'User 1', password })
+    const user = new User({ username: 'testuser0', name: 'User 0', password })
 
     await user.save()
   })
 
   test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
+    //logger.info("usersAtStart", usersAtStart)
 
     const newUser = {
       username: 'aanikei',
       name: 'Artur',
-      password: await bcrypt.hash('seckret', 9)
+      password: 'seckret'
     }
 
     await api
@@ -163,10 +165,62 @@ describe('testing POST /api/users', () => {
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
+    //logger.info("usersAtEnd", usersAtEnd)
+
     assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
     const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
+  })
+
+  test('username must be at least 3 characters long', async () => {
+    const newUser = {
+      username: 'aa',
+      name: 'Artur',
+      password: 'seckret'
+    }
+
+    const test = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    //logger.info("error", test.body.error)
+    assert(test.body.error.includes('is shorter than the minimum allowed length (3).'))
+  })
+
+  test('password must be at least 3 characters long', async () => {
+    const newUser = {
+      username: 'aanikei',
+      name: 'Artur',
+      password: 'se'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'password must be at least 3 characters long' })
+  })
+
+  test('username must be unique', async () => {
+    const newUser = {
+      username: 'testuser0', 
+      name: 'User 0',
+      password: 'seckret'
+    }
+
+    const usersAtStart = await helper.usersInDb()
+    //logger.info("usersAtStart", usersAtStart)
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'username must be unique' })
   })
 })
 
