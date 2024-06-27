@@ -13,8 +13,8 @@ blogsRouter.post('/', async (request, response) => {
   if (blog["title"] === undefined || blog["url"] === undefined) {
     response.status(400).json({ error: "title or url are missing"})
   } else {
-    const user = await User.findById('6675e6f5199dfb6a1efd1f29')
-    blog.user = user.id
+    //const user = await User.findById('6675e6f5199dfb6a1efd1f29')
+    blog.user = '6675e6f5199dfb6a1efd1f29' //user.id
     const savedBlog = await blog.save()
     response.status(201).json(savedBlog)
   }  

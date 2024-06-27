@@ -71,7 +71,7 @@ describe('testing POST /api/blogs', () => {
       "url": "http://localhost:12345"
     }
 
-    const response = await api
+    await api
       .post('/api/blogs')
       .send(newBlog)
       .expect(201)

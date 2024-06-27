@@ -17,23 +17,14 @@ usersRouter.post('/', async (request, response, next) => {
     })
   }
 
-  // const existingUser = await User.findOne({ username: username })
-  // if (null !== existingUser) {
-  //   //logger.info("not unique")
-  //   return response.status(400).json({
-  //     error: 'username must be unique'
-  //   })
-  // }
-  
-  const users = await User.find({})
-  const usernames = users.map(u => u.username)
-  if (-1 !== usernames.indexOf(username)) {
+  const existingUser = await User.findOne({ username })
+  if (null !== existingUser) {
     //logger.info("not unique")
     return response.status(400).json({
       error: 'username must be unique'
     })
   }
-
+  
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds) 
 
