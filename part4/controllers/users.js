@@ -4,12 +4,12 @@ const User = require('../models/user')
 const logger = require('../utils/logger')
 
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate('blogs', ['url', 'title', 'author'])
   response.json(users)
 })
 
 usersRouter.post('/', async (request, response, next) => {
-  const { username, name, password} = request.body
+  const { username, name, password, blogs} = request.body
 
   if (password.length < 3) {
     return response.status(400).json({
@@ -40,7 +40,8 @@ usersRouter.post('/', async (request, response, next) => {
   const user = new User({
     username,
     name,
-    password: passwordHash
+    password: passwordHash,
+    blogs
   })
   //console.log("user", user)
 
