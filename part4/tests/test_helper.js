@@ -6,6 +6,26 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
+let authToken = "";
+
+const setToken = x => {
+  authToken = x
+}
+
+const getToken = () => {
+  return authToken
+}
+
+let userId = "";
+
+const setUserId = x => {
+  userId = x
+}
+
+const getUserId = () => {
+  return userId
+}
+
 module.exports = {
-  initialBlogs, usersInDb
+  initialBlogs, usersInDb, setToken, getToken, setUserId, getUserId
 }
