@@ -9,6 +9,10 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -20,6 +24,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -46,6 +51,25 @@ const App = () => {
     setUser(null)
   }
 
+  const handleBlogCreate = async () => {
+    event.preventDefault()
+
+    const newBlog = {
+      title,
+      author,
+      url
+    }
+
+    blogService
+      .create(newBlog)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog)) })
+
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+
   const loginForm = () => (
     <div>
       <div>
@@ -53,7 +77,7 @@ const App = () => {
           <input
           type="text"
           value={username}
-          name="Username"
+          name="username"
           onChange={({ target }) => setUsername(target.value)}
         />
       </div>
@@ -62,12 +86,50 @@ const App = () => {
           <input
           type="password"
           value={password}
-          name="Password"
+          name="password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
       <button onClick={handleLogin} type="submit">login</button>
     </div>      
+  )
+
+  const newBlogForm = () => (
+    <div>
+    <h2>Create New</h2>
+    <form>
+      <div>
+        <div>
+          title: 
+            <input
+            type="text"
+            value={title}
+            name="title"
+            onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          author: 
+            <input
+            type="text"
+            value={author}
+            name="author"
+            onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+        <div>
+          url: 
+            <input
+            type="text"
+            value={url}
+            name="url"
+            onChange={({ target }) => setUrl(target.value)}
+          />
+        </div>
+        <button onClick={handleBlogCreate} type="submit">create</button>
+      </div>   
+    </form>
+    </div>
   )
 
   if (user === null) {
@@ -85,6 +147,9 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout} type="submit">logout</button></p>
+      
+      { newBlogForm() }
+      <br></br>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
