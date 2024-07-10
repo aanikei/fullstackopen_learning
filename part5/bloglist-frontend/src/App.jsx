@@ -18,7 +18,10 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      { 
+        setBlogs( blogs )
+        console.log("blogs", blogs)
+      }
     )  
   }, [])
 
@@ -113,7 +116,7 @@ const App = () => {
       <h2>blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout} type="submit">logout</button></p>
       <Notification message={message} />
-      <Togglable buttonLabel="New Blog" ref={newBlogFormRef}>
+      <Togglable buttonOpen="New Blog" buttonClose="Cancel" ref={newBlogFormRef}>
         <NewBlogForm
           createBlog={addBlog}
         />
