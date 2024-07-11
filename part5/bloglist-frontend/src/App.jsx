@@ -16,10 +16,14 @@ const App = () => {
 
   const [message, setMessage] = useState(null)
 
+  function compareLikes(a, b) {
+    return b.likes - a.likes;
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       { 
-        setBlogs( blogs )
+        setBlogs( blogs.sort(compareLikes) )
         console.log("blogs", blogs)
       }
     )  
@@ -65,7 +69,7 @@ const App = () => {
     blogService
       .create(newBlog)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog)) })
+        setBlogs(blogs.concat(returnedBlog).sort(compareLikes)) })
 
     newBlogFormRef.current.toggleVisibility()
 
@@ -85,7 +89,7 @@ const App = () => {
       .then(returnedBlog => {
         console.log("returnedBlog", returnedBlog)
         const updatedBlogs = blogs.map(u => u.id !== returnedBlog.id ? u : returnedBlog);
-        setBlogs(updatedBlogs) 
+        setBlogs(updatedBlogs.sort(compareLikes)) 
       })
   }
 
