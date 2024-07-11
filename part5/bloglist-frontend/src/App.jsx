@@ -75,6 +75,20 @@ const App = () => {
     }, 5000)
   }
 
+  const addLikes = (blogToUpdate) => {
+    console.log("addLikes invoked", blogToUpdate)
+    blogToUpdate.likes += 1
+    blogToUpdate.user = blogToUpdate.user.id 
+
+    blogService
+      .update(blogToUpdate)
+      .then(returnedBlog => {
+        console.log("returnedBlog", returnedBlog)
+        const updatedBlogs = blogs.map(u => u.id !== returnedBlog.id ? u : returnedBlog);
+        setBlogs(updatedBlogs) 
+      })
+  }
+
   const loginForm = () => (
     <div>
       <div>
@@ -123,7 +137,7 @@ const App = () => {
       </Togglable>
       <br />
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLikes={addLikes} />
       )}
     </div>
   )
