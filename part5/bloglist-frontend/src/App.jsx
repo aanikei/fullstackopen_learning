@@ -79,15 +79,25 @@ const App = () => {
     }, 5000)
   }
 
+  const removeBlog = (blog) => {
+    //console.log("id to remove", blog.id)
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      blogService
+        .remove(blog.id)
+        .then(r => {
+          setBlogs(blogs.filter(i => i.id !== blog.id)) })
+    }
+  }
+
   const addLikes = (blogToUpdate) => {
-    console.log("addLikes invoked", blogToUpdate)
+    //console.log("addLikes invoked", blogToUpdate)
     blogToUpdate.likes += 1
     blogToUpdate.user = blogToUpdate.user.id 
 
     blogService
       .update(blogToUpdate)
       .then(returnedBlog => {
-        console.log("returnedBlog", returnedBlog)
+        //console.log("returnedBlog", returnedBlog)
         const updatedBlogs = blogs.map(u => u.id !== returnedBlog.id ? u : returnedBlog);
         setBlogs(updatedBlogs.sort(compareLikes)) 
       })
@@ -97,7 +107,7 @@ const App = () => {
     <div>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="username"
@@ -106,7 +116,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="password"
@@ -141,7 +151,13 @@ const App = () => {
       </Togglable>
       <br />
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} addLikes={addLikes} />
+        <Blog 
+          key={blog.id}
+          blog={blog}
+          addLikes={addLikes}
+          removeBlog={removeBlog}
+          user={user}
+        />
       )}
     </div>
   )
