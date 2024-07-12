@@ -17,16 +17,14 @@ const App = () => {
   const [message, setMessage] = useState(null)
 
   function compareLikes(a, b) {
-    return b.likes - a.likes;
+    return b.likes - a.likes
   }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      { 
-        setBlogs( blogs.sort(compareLikes) )
-        console.log("blogs", blogs)
-      }
-    )  
+    blogService.getAll().then(blogs => {
+      setBlogs( blogs.sort(compareLikes) )
+      console.log('blogs', blogs)
+    })
   }, [])
 
   useEffect(() => {
@@ -45,15 +43,15 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
-      
+
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       setUser(user)
       blogService.setToken(user.token)
-      console.log("user.name", user.name)
+      console.log('user.name', user.name)
       setUsername('')
       setPassword('')
     } catch (e) {
-      setMessage({message: 'wrong username or password', success: false})        
+      setMessage({ message: 'wrong username or password', success: false })
       setTimeout(() => {
         setMessage(null)
       }, 5000)
@@ -73,7 +71,7 @@ const App = () => {
 
     newBlogFormRef.current.toggleVisibility()
 
-    setMessage({message: `a new blog ${newBlog.title} by ${newBlog.author} added`, success: true})        
+    setMessage({ message: `a new blog ${newBlog.title} by ${newBlog.author} added`, success: true })
     setTimeout(() => {
       setMessage(null)
     }, 5000)
@@ -92,14 +90,14 @@ const App = () => {
   const addLikes = (blogToUpdate) => {
     //console.log("addLikes invoked", blogToUpdate)
     blogToUpdate.likes += 1
-    blogToUpdate.user = blogToUpdate.user.id 
+    blogToUpdate.user = blogToUpdate.user.id
 
     blogService
       .update(blogToUpdate)
       .then(returnedBlog => {
         //console.log("returnedBlog", returnedBlog)
-        const updatedBlogs = blogs.map(u => u.id !== returnedBlog.id ? u : returnedBlog);
-        setBlogs(updatedBlogs.sort(compareLikes)) 
+        const updatedBlogs = blogs.map(u => u.id !== returnedBlog.id ? u : returnedBlog)
+        setBlogs(updatedBlogs.sort(compareLikes))
       })
   }
 
@@ -124,7 +122,7 @@ const App = () => {
         />
       </div>
       <button onClick={handleLogin} type="submit">login</button>
-    </div>      
+    </div>
   )
 
   if (user === null) {
@@ -151,7 +149,7 @@ const App = () => {
       </Togglable>
       <br />
       {blogs.map(blog =>
-        <Blog 
+        <Blog
           key={blog.id}
           blog={blog}
           addLikes={addLikes}

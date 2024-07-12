@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const NewBlogForm = ({createBlog}) => {
+const NewBlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -21,41 +22,45 @@ const NewBlogForm = ({createBlog}) => {
 
   return (
     <div>
-    <h2>Create New</h2>
-    <form>
-      <div>
+      <h2>Create New</h2>
+      <form>
         <div>
-          title: 
+          <div>
+            title:
             <input
-            type="text"
-            value={title}
-            name="title"
-            onChange={event => setTitle(event.target.value)}
-          />
-        </div>
-        <div>
-          author: 
+              type="text"
+              value={title}
+              name="title"
+              onChange={event => setTitle(event.target.value)}
+            />
+          </div>
+          <div>
+            author:
             <input
-            type="text"
-            value={author}
-            name="author"
-            onChange={event => setAuthor(event.target.value)}
-          />
-        </div>
-        <div>
-          url: 
+              type="text"
+              value={author}
+              name="author"
+              onChange={event => setAuthor(event.target.value)}
+            />
+          </div>
+          <div>
+            url:
             <input
-            type="text"
-            value={url}
-            name="url"
-            onChange={event => setUrl(event.target.value)}
-          />
+              type="text"
+              value={url}
+              name="url"
+              onChange={event => setUrl(event.target.value)}
+            />
+          </div>
+          <button onClick={handleBlogCreate} type="submit">create</button>
         </div>
-        <button onClick={handleBlogCreate} type="submit">create</button>
-      </div>   
-    </form>
+      </form>
     </div>
   )
+}
+
+NewBlogForm.propTypes = {
+  createBlog: PropTypes.object.isRequired
 }
 
 export default NewBlogForm
