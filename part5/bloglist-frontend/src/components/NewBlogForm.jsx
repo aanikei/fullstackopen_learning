@@ -32,6 +32,7 @@ const NewBlogForm = ({ createBlog }) => {
               value={title}
               name="title"
               onChange={event => setTitle(event.target.value)}
+              data-testid="input_title"
             />
           </div>
           <div>
@@ -41,6 +42,7 @@ const NewBlogForm = ({ createBlog }) => {
               value={author}
               name="author"
               onChange={event => setAuthor(event.target.value)}
+              data-testid="input_author"
             />
           </div>
           <div>
@@ -50,6 +52,7 @@ const NewBlogForm = ({ createBlog }) => {
               value={url}
               name="url"
               onChange={event => setUrl(event.target.value)}
+              data-testid="input_url"
             />
           </div>
           <button onClick={handleBlogCreate} type="submit">create</button>
@@ -60,7 +63,7 @@ const NewBlogForm = ({ createBlog }) => {
 }
 
 NewBlogForm.propTypes = {
-  createBlog: PropTypes.object.isRequired
+  createBlog: PropTypes.func.isRequired
 }
 
 export default NewBlogForm
