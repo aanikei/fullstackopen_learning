@@ -1,6 +1,11 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
+  const title = 'History of the Peloponnesian War'
+  const author = 'Thucydides'
+  const url = 'https://www.gutenberg.org/files/7142/7142-h/7142-h.htm'
+
   beforeEach(async ({ page, request }) => {
     await request.post('http://localhost:3003/api/testing/reset')
     await request.post('http://localhost:3003/api/users', {
@@ -22,9 +27,7 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.getByLabel('username').fill('testuser')
-      await page.getByLabel('password').fill('secret123')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'testuser', 'secret123')
 
       await expect(page.getByLabel('username')).toBeHidden()
       await expect(page.getByLabel('password')).toBeHidden()
@@ -33,33 +36,32 @@ describe('Blog app', () => {
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await page.getByLabel('username').fill('testuser')
-      await page.getByLabel('password').fill('secret12')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'testuser', 'secret12')
       await expect(page.getByText('wrong username or password')).toBeVisible()
     })
   })
 
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      await page.getByLabel('username').fill('testuser')
-      await page.getByLabel('password').fill('secret123')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'testuser', 'secret123')
     })
   
     test('a new blog can be created', async ({ page }) => {
-      const title = 'History of the Peloponnesian War'
-      const author = 'Thucydides'
-
-      await page.getByRole('button', { name: 'New Blog' }).click()
-      await page.getByLabel('title').fill(title)
-      await page.getByLabel('author').fill(author)
-      await page.getByLabel('url').fill('https://www.gutenberg.org/files/7142/7142-h/7142-h.htm')
-      await page.getByRole('button', { name: 'create' }).click()
+      await createBlog(page, title, author, url)
 
       await expect(page.getByText(`a new blog ${title} by ${author} added`)).toBeVisible()
       await expect(page.getByText(`${title} ${author}`).and(page.locator('div:visible'))).toBeVisible()
       await expect(page.getByRole('button', { name: 'view' })).toBeVisible()
     })
+
+    test('a blog can be liked', async ({ page }) => {
+      await createBlog(page, title, author, url)
+
+      await page.getByRole('button', { name: 'view' }).click()
+      await expect(page.getByText('likes: 0')).toBeVisible()
+
+      await page.getByRole('button', { name: 'like' }).click()
+      await expect(page.getByText('likes: 1')).toBeVisible()
+    })    
   })
 })
