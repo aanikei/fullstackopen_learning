@@ -13,8 +13,8 @@ const Blog = ({ blog, addLikes, removeBlog, user }) => {
     userdata.name = 'unknown'
   }
 
-  //console.log("user", user)
-  //console.log("userdata", userdata)
+  console.log('user', user)
+  console.log('userdata', userdata)
 
   const blogStyle = {
     paddingTop: 10,
@@ -45,8 +45,10 @@ const Blog = ({ blog, addLikes, removeBlog, user }) => {
         <button onClick={() => addLikes(blog)}>like</button>
         <br/>
         {userdata.name}
-        { user.username === userdata.username && user.name === userdata.name
-          ? <button onClick={() => removeBlog(blog)}>remove</button> : null }
+        {console.log('user.username', user.username)}
+        {console.log('userdata.username', userdata.username)}
+        {user.username === userdata.username && user.name === userdata.name
+          ? <button onClick={() => removeBlog(blog)}>remove</button> : null}
       </div>
     </div>
   )

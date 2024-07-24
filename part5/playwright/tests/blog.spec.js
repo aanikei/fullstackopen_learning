@@ -62,6 +62,24 @@ describe('Blog app', () => {
 
       await page.getByRole('button', { name: 'like' }).click()
       await expect(page.getByText('likes: 1')).toBeVisible()
-    })    
+    })
+    
+    test('a user who added the blog can delete it', async ({ page }) => {
+      await createBlog(page, title, author, url)
+
+      await page.getByRole('button', { name: 'view' }).click()
+
+      page.on('dialog', dialog => {
+        console.log(dialog.message());
+        dialog.accept();
+      })
+
+      await page.getByRole('button', { name: 'remove' }).click('click')
+      
+      page.on('dialog', dialog => dialog.accept())
+      
+      await page.waitForTimeout(1000)
+      await expect(page.getByText(`${title} ${author}`)).toBeHidden()
+    })   
   })
 })

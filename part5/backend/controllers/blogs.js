@@ -18,7 +18,8 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response, next) 
   } else {
     blog.user = user._id
     const savedBlog = await blog.save()
-    response.status(201).json(savedBlog)
+    const savedBlogWithUser = await Blog.findById(savedBlog._id).populate('user', ['username', 'name'])
+    response.status(201).json(savedBlogWithUser)
   }
 })
 

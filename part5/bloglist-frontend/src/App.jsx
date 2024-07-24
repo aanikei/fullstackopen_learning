@@ -78,8 +78,9 @@ const App = () => {
   }
 
   const removeBlog = (blog) => {
-    //console.log("id to remove", blog.id)
+    console.log('id to remove', blog.id)
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      console.log('inside window.confirm')
       blogService
         .remove(blog.id)
         .then(r => {
