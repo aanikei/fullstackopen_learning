@@ -74,12 +74,30 @@ describe('Blog app', () => {
         dialog.accept();
       })
 
-      await page.getByRole('button', { name: 'remove' }).click('click')
-      
-      page.on('dialog', dialog => dialog.accept())
-      
+      await page.getByRole('button', { name: 'remove' }).click('click')      
       await page.waitForTimeout(1000)
+
       await expect(page.getByText(`${title} ${author}`)).toBeHidden()
-    })   
+    })
+    
+    test('a user who did not add the blog cannot delete it', async ({ page, request }) => {
+      await createBlog(page, title, author, url)
+
+      await page.getByRole('button', { name: 'logout' }).click()
+
+      await request.post('http://localhost:3003/api/users', {
+        data: {
+          name: 'test user 2',
+          username: 'testuser2',
+          password: 'secret123'
+        }
+      })
+
+      await loginWith(page, 'testuser2', 'secret123')
+
+      await page.getByRole('button', { name: 'view' }).click()
+
+      await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
+    })  
   })
 })
