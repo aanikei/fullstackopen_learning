@@ -2,9 +2,9 @@ const { test, expect, beforeEach, describe } = require('@playwright/test')
 const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
-  const title = 'History of the Peloponnesian War'
-  const author = 'Thucydides'
-  const url = 'https://www.gutenberg.org/files/7142/7142-h/7142-h.htm'
+  const title = 'La NASA y SpaceX han dado más detalles acerca del USDV, la nave que terminará con la Estación Espacial Internacional'
+  const author = '@Wicho'
+  const url = 'https://www.microsiervos.com/archivo/espacio/nasa-spacex-detalles-nave-terminara-estacion-espacial.html'
 
   beforeEach(async ({ page, request }) => {
     await request.post('http://localhost:3003/api/testing/reset')
@@ -99,5 +99,40 @@ describe('Blog app', () => {
 
       await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
     })  
+
+    test('the blogs are arranged in the order according to the likes', async ({ page }) => {
+      const blogs = [
+        { title, author, url },
+        { title: 'Una actualización fallida del antivirus CrowdStrike para Windows causa el caos informático en todo el mundo', author: '@Wicho', url: 'https://www.microsiervos.com/archivo/ordenadores/crowdstrike-windows-caos-informatico.html' }, 
+        { title: 'Una subida a la cima del monte Everest en 45 minutos con un dron: del primer campamento base a más allá de los 8.849 metros de altitud', author: '@Alvy', url: 'https://www.microsiervos.com/archivo/mundoreal/subida-cima-monte-everest-en-45-minutos-con-un-dron.html' }
+      ]
+      await createBlog(page, blogs[0].title, blogs[0].author, blogs[0].url)
+      await createBlog(page, blogs[1].title, blogs[1].author, blogs[1].url)
+      await createBlog(page, blogs[2].title, blogs[2].author, blogs[2].url)
+
+      for (let i = 0; i < blogs.length; i++) {
+        await page.getByTestId('bloglist')
+          .locator('div')
+          //.filter({ hasText: new RegExp(`${blogs[i].title} ${blogs[i].author}`, 'g') })
+          .filter({ hasText: `${blogs[i].title} ${blogs[i].author}` })
+          .getByRole('button', { name: 'view' }).click()
+
+        for (let j = 1; j <= i + 1 ; j++) {
+          await page.getByTestId('bloglist')
+            .locator('div')
+            //.filter({ hasText: new RegExp(`${blogs[i].title} ${blogs[i].author}`, 'g') })
+            .filter({ hasText: `${blogs[i].title} ${blogs[i].author}` })
+            .getByRole('button', { name: 'like' }).click()
+
+          await page.getByTestId('bloglist')
+            .locator('div')
+            //.filter({ hasText: new RegExp(`${blogs[i].title} ${blogs[i].author}`, 'g') })
+            .filter({ hasText: `${blogs[i].title} ${blogs[i].author}` })
+            .getByText(j).waitFor()
+        }
+      }
+
+      await expect(page.locator('div > span.likes')).toHaveText(['likes: 3', 'likes: 2', 'likes: 1']);
+    })
   })
 })
