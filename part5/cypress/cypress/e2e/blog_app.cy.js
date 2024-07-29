@@ -36,4 +36,18 @@ describe('Blog app', () => {
       cy.get('div.error').should('have.css', 'border-color', 'rgb(235, 4, 4)')
     })
   })
+
+  describe('When logged in', () => {
+    beforeEach(function() {
+      cy.login({ username: 'testuser', password: 'secret123' })
+    })
+
+    it('A blog can be created', () => {
+      const title = 'La NASA y SpaceX han dado más detalles acerca del USDV, la nave que terminará con la Estación Espacial Internacional'
+      const author = '@Wicho'
+      const url = 'https://www.microsiervos.com/archivo/espacio/nasa-spacex-detalles-nave-terminara-estacion-espacial.html'
+
+      cy.createBlog({ title, author, url })
+    })
+  })
 })
