@@ -1,11 +1,39 @@
 describe('Blog app', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:5173')
+    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+
+    const user = {
+      name: 'test user',
+      username: 'testuser',
+      password: 'secret123'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users', user)
+    
+    cy.visit('http://localhost:5173/')
   })
 
   it('Login form is shown', () => {
     cy.contains('username')
     cy.contains('password')
     cy.contains('login')
+  })
+
+  describe('Login', () => {
+    it('succeeds with correct credentials', () => {
+      cy.get('input[name="username"]').type('testuser')
+      cy.get('input[name="password"]').type('secret123')
+      cy.get('button').click()
+
+      cy.contains('New Blog')
+    })
+
+    it('fails with wrong credentials', () => {
+      cy.get('input[name="username"]').type('testuser')
+      cy.get('input[name="password"]').type('secret12')
+      cy.get('button').click()
+
+      cy.contains('wrong username or password')
+      cy.get('div.error').should('have.css', 'border-color', 'rgb(235, 4, 4)')
+    })
   })
 })
