@@ -63,6 +63,22 @@ describe('Blog app', () => {
       cy.get('button').contains('remove').click()
       cy.contains(`${title} ${author}`).should('not.exist')
     })
+
+    it('A user who did not add the blog cannot delete it', () => {
+      cy.createBlog({ title, author, url })
+      cy.get('button').contains('logout').click()
+
+      const user = {
+        name: 'test user 2',
+        username: 'testuser2',
+        password: 'secret123'
+      }
+      cy.request('POST', 'http://localhost:3003/api/users', user)
+      cy.login({ username: 'testuser2', password: 'secret123' })
+
+      cy.get('button').contains('view').click()
+      cy.get('button').contains('remove').should('not.exist')
+    })
       
   })
 })
