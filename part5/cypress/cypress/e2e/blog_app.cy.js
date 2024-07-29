@@ -80,5 +80,36 @@ describe('Blog app', () => {
       cy.get('button').contains('remove').should('not.exist')
     })
       
+    it('The blogs are arranged in the order according to the likes', () => {
+      const blogs = [
+        { title, author, url },
+        { title: 'Una actualización fallida del antivirus CrowdStrike para Windows causa el caos informático en todo el mundo', author: '@Wicho', url: 'https://www.microsiervos.com/archivo/ordenadores/crowdstrike-windows-caos-informatico.html' }, 
+        { title: 'Una subida a la cima del monte Everest en 45 minutos con un dron: del primer campamento base a más allá de los 8.849 metros de altitud', author: '@Alvy', url: 'https://www.microsiervos.com/archivo/mundoreal/subida-cima-monte-everest-en-45-minutos-con-un-dron.html' }
+      ]
+
+      for(let i = 0; i < 3; i++) {
+        cy.createBlog({ title: blogs[i].title, author: blogs[i].author, url: blogs[i].url })
+        cy.contains(`${blogs[i].title} ${blogs[i].author}`)
+          .children('button')
+          .contains('view')
+          .click()
+
+        for(let n = 0; n < i + 1; n++) {
+          cy.contains(`${blogs[i].title} ${blogs[i].author}`)
+            .parent()
+            .find('button')
+            .contains('like')
+            .click()
+
+          cy.contains(`${blogs[i].title} ${blogs[i].author}`)
+            .parent()
+            .contains(`likes: ${n + 1}`)
+        }
+      }
+      
+      cy.get('[data-testid="bloglist"]').children().eq(0).should('contain', `${blogs[2].title} ${blogs[2].author}`)
+      cy.get('[data-testid="bloglist"]').children().eq(1).should('contain', `${blogs[1].title} ${blogs[1].author}`)
+      cy.get('[data-testid="bloglist"]').children().eq(2).should('contain', `${blogs[0].title} ${blogs[0].author}`)
+    })
   })
 })
