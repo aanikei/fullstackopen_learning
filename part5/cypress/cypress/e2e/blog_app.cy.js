@@ -56,5 +56,13 @@ describe('Blog app', () => {
       cy.get('button').contains('like').click()
       cy.contains('likes: 1')
     })
+
+    it('A user who added the blog can delete it', () => {
+      cy.createBlog({ title, author, url })
+      cy.get('button').contains('view').click()
+      cy.get('button').contains('remove').click()
+      cy.contains(`${title} ${author}`).should('not.exist')
+    })
+      
   })
 })
