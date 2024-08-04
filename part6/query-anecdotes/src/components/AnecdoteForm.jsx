@@ -12,6 +12,14 @@ const AnecdoteForm = () => {
     mutationFn: createAnecdote,
     onSuccess: () => {      
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+    },
+    onError: (error) => {    
+      const responseError = error.response.data.error
+      console.log("responseError", responseError)
+      dispatch(responseError)
+      setTimeout(() => {
+        dispatch('')
+      }, 5000)
     } 
   })
 
@@ -22,7 +30,7 @@ const AnecdoteForm = () => {
     console.log('new anecdote')
 
     newAnecdoteMutation.mutate({ content, votes: 0 })
-    console.log('onCreate', content)
+    
     dispatch(`you created "${content}"`)
     setTimeout(() => {
       dispatch('')
