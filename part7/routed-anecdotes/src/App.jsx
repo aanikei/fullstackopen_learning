@@ -73,9 +73,9 @@ const CreateNew = (props) => {
         votes: 0
       })
     } else {
-      content.reset()
-      author.reset()
-      info.reset()
+      content.onReset()
+      author.onReset()
+      info.onReset()
     }
     
   }
