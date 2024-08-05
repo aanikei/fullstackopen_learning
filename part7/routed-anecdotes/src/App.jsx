@@ -64,12 +64,20 @@ const CreateNew = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
-      votes: 0
-    })
+    console.log(e.nativeEvent.submitter.name)
+    if (e.nativeEvent.submitter.name === 'create') {
+      props.addNew({
+        content: content.value,
+        author: author.value,
+        info: info.value,
+        votes: 0
+      })
+    } else {
+      content.reset()
+      author.reset()
+      info.reset()
+    }
+    
   }
 
   return (
@@ -88,7 +96,8 @@ const CreateNew = (props) => {
           url for more info
           <input { ...info } />
         </div>
-        <button>create</button>
+        <button name="create">create</button>
+        <button name="reset">reset</button>
       </form>
     </div>
   )
