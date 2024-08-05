@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useMatch } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 const Menu = () => {
@@ -15,11 +15,21 @@ const Menu = () => {
   )
 }
 
+const Anecdote = ({ anecdote }) => (
+  <div>
+    <h2>{anecdote.content} by {anecdote.author}</h2>
+    <div>has {anecdote.votes} votes</div>
+    <br></br>
+    <div>for more info see <a href={anecdote.info}>{anecdote.info}</a></div>
+    <br></br>
+  </div>
+)
+
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`} key={anecdote.id} >{anecdote.content}</Link></li>)}
     </ul>
   </div>
 )
@@ -42,7 +52,7 @@ const Footer = () => (
   <div>
     Anecdote app for <a href='https://fullstackopen.com/'>Full Stack Open</a>.
 
-    See <a href='https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js</a> for the source code.
+    See <a href='https://github.com/fullstack-hy2020/routed-anecdotes/blob/main/src/App.jsx'>https://github.com/fullstack-hy2020/routed-anecdotes/blob/main/src/App.jsx</a> for the source code.
   </div>
 )
 
@@ -124,18 +134,20 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
 
+  const match = useMatch('/anecdotes/:id')  
+  const anecdote = match ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id)) : null
+
   return (
     <div>
-      <Router>
-        <h1>Software anecdotes</h1>
-        <Menu  />
-        <Routes>
-          <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
-          <Route path="/create" element={<CreateNew addNew={addNew} />} />
-          <Route path="/about" element={<About />} />
+      <h1>Software anecdotes</h1>
+      <Menu  />
+      <Routes>
+        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
+        <Route path="/create" element={<CreateNew addNew={addNew} />} />
+        <Route path="/about" element={<About />} />
       </Routes>
-        <Footer />
-      </Router>
+      <Footer />
     </div>
   )
 }
@@ -148,4 +160,8 @@ AnecdoteList.propTypes = {
 
 CreateNew.propTypes = {
   addNew: PropTypes.func
+}
+
+Anecdote.propTypes = {
+  anecdote: PropTypes.object
 }
