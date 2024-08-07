@@ -6,6 +6,9 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Togglable'
 
+import { setNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -13,10 +16,10 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   const newBlogFormRef = useRef()
-
   const [message, setMessage] = useState(null)
+  const dispatch = useDispatch()
 
-  function compareLikes(a, b) {
+  const compareLikes = (a, b) => {
     return b.likes - a.likes
   }
 
@@ -52,10 +55,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (e) {
-      setMessage({ message: 'wrong username or password', success: false })
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(setNotification({ message: 'wrong username or password', success: false }))
     }
   }
 
@@ -71,13 +71,10 @@ const App = () => {
 
     newBlogFormRef.current.toggleVisibility()
 
-    setMessage({
+    dispatch(setNotification({
       message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
       success: true,
-    })
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
+    }))
   }
 
   const removeBlog = (blog) => {
