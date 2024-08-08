@@ -16,7 +16,6 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   const newBlogFormRef = useRef()
-  const [message, setMessage] = useState(null)
   const dispatch = useDispatch()
 
   const compareLikes = (a, b) => {
@@ -135,7 +134,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={message} />
+        <Notification />
         <form>{loginForm()}</form>
       </div>
     )
@@ -150,7 +149,7 @@ const App = () => {
           logout
         </button>
       </p>
-      <Notification message={message} />
+      <Notification />
       <Togglable
         buttonOpen="New Blog"
         buttonClose="Cancel"
