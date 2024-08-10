@@ -1,15 +1,32 @@
 import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { setNotification } from '../reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
+import blogService from '../services/blogs'
 
-const NewBlogForm = ({ createBlog }) => {
+const NewBlogForm = ({ blogs, setBlogs }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
+  const compareLikes = (a, b) => b.likes - a.likes
+
+  const dispatch = useDispatch()
+
+  const addBlog = (newBlog) => {
+    blogService.create(newBlog).then((returnedBlog) => {
+      setBlogs(blogs.concat(returnedBlog).sort(compareLikes))
+    })
+
+    dispatch(setNotification({
+      message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+      success: true,
+    }))
+  }
+
   const handleBlogCreate = (event) => {
     event.preventDefault()
 
-    createBlog({
+    addBlog({
       title,
       author,
       url,
@@ -68,10 +85,6 @@ const NewBlogForm = ({ createBlog }) => {
       </form>
     </div>
   )
-}
-
-NewBlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
 }
 
 export default NewBlogForm
