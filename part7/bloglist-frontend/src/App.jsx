@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
@@ -6,9 +6,10 @@ import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
 import { useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import LoginContext from './reducers/loginContext'
 
 const App = () => {
-  const [user, setUser] = useState(null)
+  const [user, userDispatch] = useContext(LoginContext)
 
   const dispatch = useDispatch()
   const newBlogFormRef = useRef()
@@ -19,7 +20,7 @@ const App = () => {
 
   const handleLogout = async () => {
     window.localStorage.removeItem('loggedInUser')
-    setUser(null)
+    userDispatch({ type: 'logout' })
   }
 
   if (user === null) {
@@ -27,8 +28,7 @@ const App = () => {
       <div>
         <h2>Log in to application</h2>
         <Notification />
-        <LoginForm
-          setUser={setUser} />
+        <LoginForm />
       </div>
     )
   }

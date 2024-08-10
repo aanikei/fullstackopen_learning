@@ -1,20 +1,22 @@
 import loginService from '../services/login'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import blogService from '../services/blogs'
 import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
+import LoginContext from '../reducers/loginContext'
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
+  const [user, userDispatch] = useContext(LoginContext)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({ type: 'login', payload: user })
       blogService.setToken(user.token)
     }
   })
@@ -29,7 +31,7 @@ const LoginForm = ({ setUser }) => {
       })
 
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-      setUser(user)
+      userDispatch({ type: 'login', payload: user })
       blogService.setToken(user.token)
       console.log('user.name', user.name)
       setUsername('')
