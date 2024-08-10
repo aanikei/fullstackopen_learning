@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
@@ -9,10 +9,9 @@ import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
+  const newBlogFormRef = useRef()
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -29,10 +28,6 @@ const App = () => {
         <h2>Log in to application</h2>
         <Notification />
         <LoginForm
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
           setUser={setUser} />
       </div>
     )
@@ -50,9 +45,11 @@ const App = () => {
       <Notification />
       <Togglable
         buttonOpen="New Blog"
-        buttonClose="Cancel" >
+        buttonClose="Cancel"
+        ref={newBlogFormRef} >
         <NewBlogForm
-          user={user} />
+          user={user}
+          newBlogFormRef={newBlogFormRef} />
       </Togglable>
       <br />
       <BlogList

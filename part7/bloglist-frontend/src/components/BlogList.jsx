@@ -1,10 +1,9 @@
-import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Blog from '../components/Blog'
-import blogService from '../services/blogs'
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 
 const BlogList = ({ user }) => {
-  const compareLikes = (a, b) => b.likes - a.likes
+  const dispatch = useDispatch()
 
   const blogs = useSelector(state => {
     return state.blogs
@@ -12,26 +11,15 @@ const BlogList = ({ user }) => {
 
   const removeBlog = (blog) => {
     console.log('id to remove', blog.id)
-    // if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-    //   console.log('inside window.confirm')
-    //   blogService.remove(blog.id).then((r) => {
-    //     setBlogs(blogs.filter((i) => i.id !== blog.id))
-    //   })
-    // }
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      //console.log('inside window.confirm')
+      dispatch(deleteBlog(blog.id))
+    }
   }
 
-  const addLikes = (blogToUpdate) => {
-    console.log('addLikes invoked', blogToUpdate)
-    // blogToUpdate.likes += 1
-    // blogToUpdate.user = blogToUpdate.user.id
-
-    // blogService.update(blogToUpdate).then((returnedBlog) => {
-    //   //console.log("returnedBlog", returnedBlog)
-    //   const updatedBlogs = blogs.map((u) =>
-    //     u.id !== returnedBlog.id ? u : returnedBlog,
-    //   )
-    //   setBlogs(updatedBlogs.sort(compareLikes))
-    // })
+  const addLikes = (blogToLike) => {
+    //console.log('addLikes invoked', blogToLike)
+    dispatch(likeBlog(blogToLike))
   }
 
   return (

@@ -1,10 +1,13 @@
 import loginService from '../services/login'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import blogService from '../services/blogs'
 import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
 
-const LoginForm = ({ username, setUsername, password, setPassword, setUser }) => {
+const LoginForm = ({ setUser }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
   const dispatch = useDispatch()
 
   useEffect(() => {
