@@ -1,15 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
+import { useDispatch } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [blogs, setBlogs] = useState([])
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  })
 
   const handleLogout = async () => {
     window.localStorage.removeItem('loggedInUser')
@@ -45,13 +52,10 @@ const App = () => {
         buttonOpen="New Blog"
         buttonClose="Cancel" >
         <NewBlogForm
-          blogs={blogs}
-          setBlogs={setBlogs} />
+          user={user} />
       </Togglable>
       <br />
       <BlogList
-        blogs={blogs}
-        setBlogs={setBlogs}
         user={user} />
     </div>
   )

@@ -1,36 +1,24 @@
 import { useState } from 'react'
 import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
-import blogService from '../services/blogs'
+import { createBlog } from '../reducers/blogReducer'
 
-const NewBlogForm = ({ blogs, setBlogs }) => {
+const NewBlogForm = ({ user }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const compareLikes = (a, b) => b.likes - a.likes
-
   const dispatch = useDispatch()
-
-  const addBlog = (newBlog) => {
-    blogService.create(newBlog).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog).sort(compareLikes))
-    })
-
-    dispatch(setNotification({
-      message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-      success: true,
-    }))
-  }
 
   const handleBlogCreate = (event) => {
     event.preventDefault()
 
-    addBlog({
-      title,
-      author,
-      url,
-    })
+    dispatch(createBlog({ title, author, url, likes: 0, user }))
+
+    dispatch(setNotification({
+      message: `a new blog ${title} by ${author} added`,
+      success: true,
+    }))
 
     setTitle('')
     setAuthor('')
