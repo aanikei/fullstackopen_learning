@@ -4,9 +4,11 @@ import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
+import Users from './components/Users'
 import { useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import LoginContext from './reducers/loginContext'
+import { BrowserRouter as Router,  Routes, Route } from 'react-router-dom'
 
 const App = () => {
   const [user, userDispatch] = useContext(LoginContext)
@@ -33,28 +35,42 @@ const App = () => {
     )
   }
 
+  const Main = () => {
+    return (
+      <div>
+        <Togglable
+          buttonOpen="New Blog"
+          buttonClose="Cancel"
+          ref={newBlogFormRef} >
+          <NewBlogForm
+            user={user}
+            newBlogFormRef={newBlogFormRef} />
+        </Togglable>
+        <br />
+        <BlogList
+          user={user} />
+      </div>
+    )
+  }
+
   return (
-    <div>
-      <h2>blogs</h2>
-      <p>
-        {user.name} logged in
-        <button onClick={handleLogout} type="submit">
-          logout
-        </button>
-      </p>
-      <Notification />
-      <Togglable
-        buttonOpen="New Blog"
-        buttonClose="Cancel"
-        ref={newBlogFormRef} >
-        <NewBlogForm
-          user={user}
-          newBlogFormRef={newBlogFormRef} />
-      </Togglable>
-      <br />
-      <BlogList
-        user={user} />
-    </div>
+    <Router>
+      <div>
+        <h2>blogs</h2>
+        <p>
+          {user.name} logged in
+          <button onClick={handleLogout} type="submit">
+            logout
+          </button>
+        </p>
+        <Notification />
+
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/users" element={<Users />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
