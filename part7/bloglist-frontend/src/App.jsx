@@ -3,7 +3,8 @@ import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
-import BlogList from './components/BlogList'
+import Blogs from './components/Blogs'
+import Blog from './components/Blog'
 import Users from './components/Users'
 import User from './components/User'
 import { useDispatch } from 'react-redux'
@@ -48,8 +49,7 @@ const App = () => {
             newBlogFormRef={newBlogFormRef} />
         </Togglable>
         <br />
-        <BlogList
-          user={user} />
+        <Blogs />
       </div>
     )
   }
@@ -68,6 +68,7 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<Main />} />
+          <Route path="/blogs/:id" element={<Blog />} />
           <Route path="/users/*" element={<Users />} />
           <Route path="/users/:id" element={<User />} />
         </Routes>
