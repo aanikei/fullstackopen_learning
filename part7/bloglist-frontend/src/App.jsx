@@ -10,7 +10,7 @@ import User from './components/User'
 import { useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import LoginContext from './reducers/loginContext'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 const App = () => {
   const [user, userDispatch] = useContext(LoginContext)
@@ -54,17 +54,20 @@ const App = () => {
     )
   }
 
+  const padding = {
+    paddingRight: 5
+  }
+
   return (
     <Router>
       <div>
-        <h2>blogs</h2>
-        <p>
-          {user.name} logged in
-          <button onClick={handleLogout} type="submit">
-            logout
-          </button>
-        </p>
-        <Notification />
+        <Link to='/' style={padding}>blogs</Link>
+        <Link to='/users' style={padding}>users</Link>
+        {user.name} logged in
+        <button onClick={handleLogout} type="submit">
+          logout
+        </button>
+        <h2>blog app</h2>
 
         <Routes>
           <Route path="/" element={<Main />} />
