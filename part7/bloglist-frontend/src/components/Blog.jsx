@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import PropTypes from 'prop-types'
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { likeBlog } from '../reducers/blogReducer'
+import { likeBlog, commentBlog } from '../reducers/blogReducer'
 
 const Blog = () => {
+  const [comment, setComment] = useState('')
   const dispatch = useDispatch()
 
   const addLikes = (blogToLike) => {
@@ -17,16 +17,20 @@ const Blog = () => {
   })
 
   let { id } = useParams()
-  console.log('id', id)
+
+  const addComment = (e) => {
+    e.preventDefault()
+    dispatch(commentBlog(id, comment))
+    setComment('')
+  }
 
   let blog = []
 
   if (blogs && blogs.length > 0) {
-    blog = blogs.filter(i => i.id === id)[0]
+    blog = blogs.find(i => i.id === id)
   } else {
     return null
   }
-  console.log('blogs', blogs)
 
   return (
     <div>
@@ -38,6 +42,16 @@ const Blog = () => {
       <span>added by {blog.user === undefined ? 'unknown' : blog.user.name}</span>
       <br></br>
       <h3>comments</h3>
+      <form onSubmit={addComment}>
+        <div>
+          <input
+            type="text"
+            value={comment}
+            name="comment"
+            onChange={({ target }) => setComment(target.value)}
+          /><button type="submit">add comment</button>
+        </div>
+      </form>
       <ul>
         {blog.comments.map((comment, index) => (
           <li key={index}>{comment}</li>

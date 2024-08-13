@@ -44,8 +44,6 @@ blogsRouter.put('/:id', async (request, response) => {
 blogsRouter.post('/:id/comments', async (request, response, next) => {
   const blog = await Blog.findById(request.params.id)
   const commentedBlog = { ...blog._doc, comments: [...blog.comments, request.body.comment]}
-  console.log('commentedBlog', commentedBlog)
-
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, commentedBlog, { new: true }).populate('user', ['username', 'name'])
   response.json(updatedBlog)
 })
