@@ -3,6 +3,12 @@ import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
 
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+
 const NewBlogForm = ({ user, newBlogFormRef }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -29,50 +35,67 @@ const NewBlogForm = ({ user, newBlogFormRef }) => {
 
   return (
     <div>
-      <h2>Create New</h2>
-      <form>
-        <div>
-          <div>
-            <label>
-              title:
-              <input
+      <Box
+        sx={{
+          display: 'flex'
+        }}
+      >
+        <Box
+          sx={{
+            '& .MuiTextField-root': { m: 0.3, width: '25ch' },
+            '& .MuiButton-root': { m: 0.3 },
+            border: '1px solid #ccc',
+            padding: 2,
+            borderRadius: 1
+          }}
+          component="form"
+          noValidate
+        >
+          <Typography variant="h5" sx={{ mb: 2, textAlign: 'left' }}>
+            Create New
+          </Typography>
+          <Grid container direction="column" spacing={1}>
+            <Grid item>
+              <TextField
+                label="title"
                 type="text"
                 value={title}
-                name="title"
-                onChange={(event) => setTitle(event.target.value)}
+                onChange={({ target }) => setTitle(target.value)}
+                size="small"
+                autoComplete="on"
                 data-testid="input_title"
               />
-            </label>
-          </div>
-          <div>
-            <label>
-              author:
-              <input
+            </Grid>
+            <Grid item>
+              <TextField
+                label="author"
                 type="text"
                 value={author}
-                name="author"
-                onChange={(event) => setAuthor(event.target.value)}
+                onChange={({ target }) => setAuthor(target.value)}
+                size="small"
+                autoComplete="on"
                 data-testid="input_author"
               />
-            </label>
-          </div>
-          <div>
-            <label>
-              url:
-              <input
+            </Grid>
+            <Grid item>
+              <TextField
+                label="url"
                 type="text"
                 value={url}
-                name="url"
-                onChange={(event) => setUrl(event.target.value)}
+                onChange={({ target }) => setUrl(target.value)}
+                size="small"
+                autoComplete="on"
                 data-testid="input_url"
               />
-            </label>
-          </div>
-          <button onClick={handleBlogCreate} type="submit">
-            create
-          </button>
-        </div>
-      </form>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" type="submit" disableElevation onClick={handleBlogCreate}>
+              create
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
     </div>
   )
 }

@@ -4,6 +4,13 @@ import blogService from '../services/blogs'
 import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
 import LoginContext from '../reducers/loginContext'
+import Notification from '../components/Notification'
+
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
@@ -42,35 +49,57 @@ const LoginForm = () => {
   }
 
   return (
-    <form>
-      <div>
-        <div>
-          <label>
-            username
-            <input
-              type="text"
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}
+    >
+      <Box
+        sx={{
+          '& .MuiTextField-root': { m: 0.3, width: '25ch' },
+          '& .MuiButton-root': { m: 0.3 },
+          border: '1px solid #ccc',
+          padding: 2,
+          borderRadius: 1,
+        }}
+        component="form"
+        noValidate
+      >
+        <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
+          Log in to application
+        </Typography>
+        <Grid container direction="column" alignItems="flex-start">
+          <Grid item>
+            <TextField
+              label="Username"
               value={username}
-              name="username"
               onChange={({ target }) => setUsername(target.value)}
+              size="small"
+              autoComplete="on"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            password
-            <input
-              type="password"
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Password"
+              type='password'
               value={password}
-              name="password"
               onChange={({ target }) => setPassword(target.value)}
+              size="small"
+              autoComplete="off"
             />
-          </label>
-        </div>
-        <button onClick={handleLogin} type="submit">
-          login
-        </button>
-      </div>
-    </form>
+          </Grid>
+          <Grid item>
+            <Button variant="contained" type="submit" disableElevation onClick={handleLogin}>
+              login
+            </Button>
+            <Notification />
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   )
 }
 

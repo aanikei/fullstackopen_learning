@@ -1,6 +1,14 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import Typography from '@mui/material/Typography'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import TableBody from '@mui/material/TableBody'
+
 const Users = () => {
   const blogs = useSelector(state => {
     return state.blogs
@@ -39,23 +47,29 @@ const Users = () => {
 
   return (
     <div>
-      <h3>Users</h3>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col"></th>
-            <th scope="col">blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user) => (
-            <tr key={user.id}>
-              <td>{ user.userId === null ? user.name : <Link to={`/users/${user.userId}`}>{user.name}</Link>}</td>
-              <td>{user.blogs}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Typography variant="h5" component="h3">
+        Users
+      </Typography>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>blogs created</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  {user.userId === null ? user.name : <Link to={`/users/${user.userId}`}>{user.name}</Link>}
+                </TableCell>
+                <TableCell>{user.blogs}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

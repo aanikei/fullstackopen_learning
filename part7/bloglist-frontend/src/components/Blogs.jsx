@@ -1,29 +1,32 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-const Blogs = () => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 5,
-    display: 'block'
-  }
+import * as React from 'react'
+import Box from '@mui/material/Box'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
 
+const Blogs = () => {
   const blogs = useSelector(state => {
     return state.blogs
   })
 
   return (
-    <div data-testid="bloglist">
-      {blogs.map((blog) => (
-        <div key={blog.id}>
-          <Link to={`/blogs/${blog.id}`} style={blogStyle}>{blog.title} {blog.author}</Link>
-        </div>
-      ))}
-    </div>
+    <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      <nav aria-label="blogs">
+        <List>
+          {blogs.map((blog) => (
+            <ListItem key={blog.id} disablePadding>
+              <ListItemButton component={Link} to={`/blogs/${blog.id}`}>
+                <ListItemText primary={blog.title + ' ' + blog.author} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </nav>
+    </Box>
   )
 }
 
